@@ -9,20 +9,22 @@ file_path = 'where the merged data file is'
 
 # Reading the CSV and extracting data
 with open(file_path, 'r', newline='') as csvfile:
+    # create object reader --> ilterate over rows as dic (column being the key)
     reader = csv.DictReader(csvfile)
     for row in reader:
         if row['jsPsychData']:  # checking if the jsPsychData column is not empty
             try:
-                # parse the JSON string
+                # decode the json string for the first time and make it a python dic
                 trials = json.loads(row['jsPsychData'])
-                # seems like the json string is double encoded
+                # the string in the file might be double encoded so check if it is still a string and decoded once again
                 if type(trials) == str:
                     trials = json.loads(trials)
                 
-                # assume trials is now a list of dictionaries
+                # starts a loop that iterates over each trial in the trials list
                 for trial in trials:
-                    extracted_entry = {field: trial.get(field, None) for field in fields_to_extract}
-                    extracted_data.append(extracted_entry)
+                    # creates a dictionary 'extracted' with the fields specified in fields_to_extract
+                    extracted = {field: trial.get(field, None) for field in fields_to_extract}
+                    extracted_data.append(extracted)
             except json.JSONDecodeError as e:
                 print(f"JSON decode error: {e} - Data: {row['jsPsychData']}")
             except Exception as e:
