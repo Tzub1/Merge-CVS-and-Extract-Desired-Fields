@@ -11,15 +11,15 @@ file_path = 'where the merged data file is'
 with open(file_path, 'r', newline='') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
-        if row['jsPsychData']:  # Checking if the jsPsychData column is not empty
+        if row['jsPsychData']:  # checking if the jsPsychData column is not empty
             try:
-                # First attempt to parse the JSON data
+                # parse the JSON string
                 trials = json.loads(row['jsPsychData'])
-                # Check if further parsing is needed (if the data is doubly-encoded JSON)
+                # seems like the json string is double encoded
                 if type(trials) == str:
                     trials = json.loads(trials)
                 
-                # Assuming trials is now a list of dictionaries
+                # assume trials is now a list of dictionaries
                 for trial in trials:
                     extracted_entry = {field: trial.get(field, None) for field in fields_to_extract}
                     extracted_data.append(extracted_entry)
@@ -28,9 +28,8 @@ with open(file_path, 'r', newline='') as csvfile:
             except Exception as e:
                 print(f"Other error: {e} - Data type of trials: {type(trials)}")
 
-# Writing the extracted data to a new CSV file
+# writing the extracted data to a new csv file
 with open('extracted_trials.csv', 'w', newline='') as new_file:
     writer = csv.DictWriter(new_file, fieldnames=fields_to_extract)
     writer.writeheader()
     writer.writerows(extracted_data)
-
