@@ -5,7 +5,7 @@ fields_to_extract = ['trial_type', 'trial_index', 'time_elapsed', 'internal_node
 
 extracted_data = []
 
-file_path = 'C:/Users/YiChu/OneDrive/UCD/JANATA LAB/Johnathon/csv/merged_csv.csv'
+file_path = 'where the merged data file is'
 
 # Reading the CSV and extracting data
 with open(file_path, 'r', newline='') as csvfile:

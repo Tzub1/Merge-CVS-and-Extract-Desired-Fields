@@ -1,7 +1,7 @@
 import csv
 import os
 
-path = 'C:/Users/YiChu/OneDrive/UCD/JANATA LAB/Johnathon/csv/csv_data/*.csv' 
+path = 'where the all csv data files are/*.csv' 
 
 # defined empty list
 all_data = []
