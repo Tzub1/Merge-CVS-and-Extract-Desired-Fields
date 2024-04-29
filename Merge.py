@@ -1,27 +1,29 @@
 import csv
-import glob
+import os
 
 path = 'C:/Users/YiChu/OneDrive/UCD/JANATA LAB/Johnathon/csv/csv_data/*.csv' 
-csv_files = glob.glob(path)
 
-# Master list to hold all data
+# defined empty list
 all_data = []
 
-# Process each file
+# the list of csv files in the paht
+csv_files = [file for file in os.listdir(path)]
+
+# loop all files in the folder
 for file in csv_files:
-    with open(file, mode='r', newline='') as f:
+    with open(os.path.join(path, file), mode='r', newline='') as f:
         reader = csv.reader(f)
         if not all_data:
-            # Include header only from the first file
+            # if the list is empty then put the header since it is the first file being processed
             all_data.extend(reader)
         else:
-            next(reader)  # Skip the header
+            next(reader)  # skip the header if it is not the first file
             all_data.extend(reader)
 
-# Path for the combined CSV file
+# path for the merged CSV file
 output_file = 'C:/Users/YiChu/OneDrive/UCD/JANATA LAB/Johnathon/csv/merged_csv.csv'
 
-# Write all data to a new CSV file
+#write all data to a new CSV file
 with open(output_file, mode='w', newline='') as f:
     writer = csv.writer(f)
     writer.writerows(all_data)
