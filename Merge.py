@@ -21,7 +21,7 @@ for file in csv_files:
             all_data.extend(reader)
 
 # path for the merged CSV file
-output_file = 'C:/Users/YiChu/OneDrive/UCD/JANATA LAB/Johnathon/csv/merged_csv.csv'
+output_file = 'where the desired directory for the merged file is/merged_csv.csv'
 
 #write all data to a new CSV file
 with open(output_file, mode='w', newline='') as f:
