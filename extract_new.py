@@ -1,28 +1,30 @@
 import csv
 import json
+##import statistics
 
+input = ''
+output = 'extracted.csv'
 
-# Path to the input and output files
-input_file_path = 'C:/Users/YiChu/OneDrive/Desktop/Gratitude_and_data_quality-Aug5thVersion_August+21,+2024_10.07.csv'
-output_file_path = 'C:/Users/YiChu/OneDrive/Desktop/extractedas.csv'
-
-# Function to calculate the mean of a list, returning None if the list is empty
-def calculate_mean(rt_list):
-    valid_rts = [rt for rt in rt_list if rt is not None]  # Filter out None values
+def mean(rt_list):
+    valid_rts = list(filter(None, rt_list)) # filter out None
     return sum(valid_rts) / len(valid_rts) if valid_rts else None
 
-# Function to calculate the percentage of 'true' values for correctness
-def calculate_correctness(correct_list):
-    true_count = correct_list.count(True)
-    total_count = len(correct_list)
-    return (true_count / total_count) * 100 if total_count > 0 else None
+def correctness(correct_list):
+    valid_responses = [c for c in correct_list if c is not None]
+    true_count = valid_responses.count(True)
+    total_count = len(valid_responses)
+    return (true_count / total_count) if total_count > 0 else None
+
+##def SD(rt_list):
+##    valid_rts = list(filter(None, rt_list))
+
 
 # Open the input CSV file
-with open(input_file_path, mode='r', encoding='ISO-8859-1') as infile:
+with open(input, 'r', encoding='UTF-8') as infile:
     reader = csv.DictReader(infile)
     
     # Prepare the output CSV file
-    with open(output_file_path, mode='w', newline='') as outfile:
+    with open(output, 'w', newline='') as outfile:
         writer = csv.writer(outfile)
         writer.writerow([
             'ResponseId',
@@ -33,7 +35,7 @@ with open(input_file_path, mode='r', encoding='ISO-8859-1') as infile:
         
         # Iterate over each row in the input file
         for row in reader:
-            response_id = row.get('ResponseId')  # Get the ResponseId for the current row
+            response_id = row.get('ResponseId') 
             
             # Initialize lists to store rt and correctness values for each section
             rt_values_AXCPT1 = []
@@ -42,10 +44,9 @@ with open(input_file_path, mode='r', encoding='ISO-8859-1') as infile:
             correctness_values_AXCPT2 = []
             rt_values_inducing = []
             correctness_values_inducing = []
-            
-            # Process each section separately
+
             for section in ['jsPsychData_AXCPT1', 'jsPsychData_AXCPT2', 'jsPsychData_inducing']:
-                for i in range(5):  # Assuming there are up to 5 numbered columns per section (adjust if needed)
+                for i in range(5):
                     column_name = f'{section}_{i}'
                     json_data = row.get(column_name)
                     
@@ -54,7 +55,7 @@ with open(input_file_path, mode='r', encoding='ISO-8859-1') as infile:
                             parsed_data = json.loads(json_data)
                             for entry in parsed_data:
                                 if isinstance(entry, str):
-                                    entry = json.loads(entry)  # Parse if the entry is a string
+                                    entry = json.loads(entry)
                                 rt_value = entry.get('rt')
                                 correct_value = entry.get('correct')
                                 
@@ -71,20 +72,16 @@ with open(input_file_path, mode='r', encoding='ISO-8859-1') as infile:
                             # Handle JSON decoding errors
                             pass
             
-            # Calculate the mean rt and correctness for each section
-            mean_rt_AXCPT1 = calculate_mean(rt_values_AXCPT1)
-            correctness_AXCPT1 = calculate_correctness(correctness_values_AXCPT1)
-            mean_rt_AXCPT2 = calculate_mean(rt_values_AXCPT2)
-            correctness_AXCPT2 = calculate_correctness(correctness_values_AXCPT2)
-            mean_rt_inducing = calculate_mean(rt_values_inducing)
-            correctness_inducing = calculate_correctness(correctness_values_inducing)
-            
-            # Write the results to the output CSV
+            mean_rt_AXCPT1 = mean(rt_values_AXCPT1)
+            correctness_AXCPT1 = correctness(correctness_values_AXCPT1)
+            mean_rt_AXCPT2 = mean(rt_values_AXCPT2)
+            correctness_AXCPT2 = correctness(correctness_values_AXCPT2)
+            mean_rt_inducing = mean(rt_values_inducing)
+            correctness_inducing = correctness(correctness_values_inducing)
+            # just look at the mean is not enough, as well as how much error, and the data variation, standard deviation, to look at how their cognitive function changes over time.
             writer.writerow([
                 response_id,
                 mean_rt_AXCPT1, correctness_AXCPT1,
                 mean_rt_AXCPT2, correctness_AXCPT2,
                 mean_rt_inducing, correctness_inducing
             ])
-
-print("Data extraction, mean calculation, and correctness calculation complete and saved to", output_file_path)
